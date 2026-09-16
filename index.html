@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ruang Gabut — Mulai dari yang sederhana</title>
+    <style>
+      :root {
+        --ink: #14213d;
+        --muted: #64748b;
+        --soft: #f2f7ff;
+        --accent: #2563eb;
+        --accent-dark: #1d4ed8;
+        --card: #ffffff;
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: var(--ink);
+        background: #fff;
+      }
+      .container { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
+      header { position: relative; }
+      nav {
+        height: 76px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .brand { font-weight: 800; letter-spacing: -0.05em; font-size: 1.35rem; text-decoration: none; color: var(--ink); }
+      .brand span { color: var(--accent); }
+      .menu-toggle {
+        display: inline-flex; align-items: center; gap: 9px; border: 1px solid #dbeafe; background: white; color: var(--ink);
+        border-radius: 10px; padding: 10px 13px; cursor: pointer; font: inherit; font-size: .9rem; font-weight: 700;
+      }
+      .menu-icon { font-size: 1.15rem; line-height: .7; }
+      .nav-menu {
+        position: absolute; z-index: 5; top: 65px; right: 0; width: min(280px, calc(100vw - 40px)); display: none;
+        flex-direction: column; gap: 4px; padding: 10px; background: white; border: 1px solid #dbeafe; border-radius: 15px;
+        box-shadow: 0 16px 35px rgba(20, 33, 61, .12);
+      }
+      .nav-menu.is-open { display: flex; }
+      .nav-link, .nav-idea {
+        color: var(--ink); text-decoration: none; font: inherit; font-weight: 650; font-size: .94rem; text-align: left;
+        border: 0; background: transparent; border-radius: 9px; padding: 11px 12px; cursor: pointer;
+      }
+      .nav-link:hover, .nav-idea:hover { background: var(--soft); color: var(--accent); }
+      .hero {
+        min-height: 570px;
+        display: grid;
+        grid-template-columns: 1.15fr .85fr;
+        align-items: center;
+        gap: 70px;
+        padding: 50px 0 80px;
+      }
+      .eyebrow { color: var(--accent); font-weight: 750; font-size: .9rem; letter-spacing: .09em; text-transform: uppercase; }
+      h1 { font-size: clamp(2.7rem, 6vw, 5rem); line-height: 1.02; letter-spacing: -.065em; margin: 16px 0 22px; }
+      .intro { color: var(--muted); font-size: 1.13rem; line-height: 1.75; max-width: 570px; margin: 0 0 32px; }
+      .button {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--accent);
+        color: white;
+        border: 0;
+        cursor: pointer;
+        font: inherit;
+        text-decoration: none;
+        padding: 14px 20px;
+        border-radius: 12px;
+        font-weight: 750;
+        box-shadow: 0 13px 26px rgba(37, 99, 235, .2);
+        transition: transform .2s, background .2s;
+      }
+      .button:hover { transform: translateY(-2px); background: var(--accent-dark); }
+      .button-row { display: flex; flex-wrap: wrap; gap: 12px; }
+      .button-secondary { background: #fff; color: var(--accent); border: 1px solid #bfdbfe; box-shadow: none; }
+      .button-secondary:hover { background: var(--soft); color: var(--accent-dark); }
+      .art {
+        background: linear-gradient(145deg, #dbeafe, #eff6ff 55%, #bfdbfe);
+        border-radius: 32px;
+        min-height: 365px;
+        padding: 30px;
+        position: relative;
+        overflow: hidden;
+      }
+      .art::before, .art::after { content: ""; position: absolute; border-radius: 50%; background: rgba(37, 99, 235, .14); }
+      .art::before { width: 260px; height: 260px; right: -80px; top: -110px; }
+      .art::after { width: 180px; height: 180px; left: -75px; bottom: -90px; }
+      .note {
+        position: relative; z-index: 1; background: rgba(255,255,255,.9); border: 1px solid rgba(255,255,255,.95);
+        padding: 22px; border-radius: 20px; box-shadow: 0 18px 40px rgba(31, 72, 135, .12);
+      }
+      .note + .note { margin-top: 18px; margin-left: 40px; }
+      .dot { display: block; width: 38px; height: 38px; border-radius: 12px; background: #dbeafe; color: var(--accent); text-align: center; line-height: 38px; font-weight: 800; margin-bottom: 14px; }
+      .note strong { display: block; font-size: 1.05rem; margin-bottom: 7px; }
+      .note p { margin: 0; color: var(--muted); font-size: .9rem; line-height: 1.5; }
+      .features { background: var(--soft); padding: 82px 0; }
+      .section-title { max-width: 560px; }
+      h2 { font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -.05em; margin: 10px 0 15px; }
+      .section-title p { color: var(--muted); line-height: 1.7; }
+      .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 38px; }
+      .feature { background: var(--card); padding: 28px; border-radius: 18px; }
+      .feature b { display: block; font-size: 1.05rem; margin: 17px 0 9px; }
+      .feature p { margin: 0; color: var(--muted); font-size: .93rem; line-height: 1.65; }
+      .icon { font-size: 1.65rem; }
+      footer { padding: 28px 0; color: var(--muted); font-size: .9rem; display: flex; justify-content: space-between; }
+      dialog {
+        width: min(560px, calc(100% - 32px));
+        border: 0;
+        border-radius: 24px;
+        padding: 0;
+        color: var(--ink);
+        box-shadow: 0 24px 70px rgba(20, 33, 61, .25);
+      }
+      dialog::backdrop { background: rgba(20, 33, 61, .48); backdrop-filter: blur(3px); }
+      .idea-panel { padding: 30px; }
+      .dialog-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; }
+      .dialog-top h2 { font-size: 1.8rem; margin: 8px 0 4px; }
+      .close {
+        color: var(--muted); background: transparent; border: 0; font-size: 1.7rem; line-height: 1; cursor: pointer;
+        padding: 4px 0 4px 10px;
+      }
+      .idea-panel > p { color: var(--muted); line-height: 1.6; margin: 12px 0 20px; }
+      label { display: block; font-weight: 700; font-size: .92rem; margin-bottom: 8px; }
+      textarea {
+        width: 100%; min-height: 125px; resize: vertical; border: 1px solid #bfdbfe; border-radius: 12px;
+        padding: 13px; color: var(--ink); font: inherit; line-height: 1.5; outline: none;
+      }
+      textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 4px #dbeafe; }
+      .form-row { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-top: 17px; }
+      .saved-note { color: var(--muted); font-size: .82rem; }
+      .saved-list { border-top: 1px solid #e2e8f0; margin-top: 25px; padding-top: 20px; }
+      .saved-list h3 { font-size: 1rem; margin: 0 0 12px; }
+      .idea-item { display: flex; align-items: flex-start; justify-content: space-between; gap: 15px; background: var(--soft); border-radius: 12px; padding: 13px; margin-top: 10px; }
+      .idea-item p { white-space: pre-wrap; margin: 0; font-size: .92rem; line-height: 1.5; }
+      .delete-idea { border: 0; background: transparent; color: var(--muted); cursor: pointer; padding: 1px 3px; font-size: 1.05rem; }
+      .empty { color: var(--muted); font-size: .9rem; margin: 0; }
+      @media (max-width: 720px) {
+        nav { height: 70px; }
+        .menu-toggle { padding: 9px 11px; }
+        .nav-menu { top: 60px; }
+        .hero { grid-template-columns: 1fr; gap: 35px; padding-top: 34px; }
+        .art { min-height: 300px; }
+        .grid { grid-template-columns: 1fr; }
+        footer { display: block; line-height: 1.8; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="container">
+      <nav>
+        <a class="brand" href="#beranda">ruang <span>gabut</span>.</a>
+        <button class="menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-menu">
+          <span class="menu-icon" aria-hidden="true">☰</span> Menu
+        </button>
+        <div class="nav-menu" id="nav-menu">
+          <a class="nav-link" href="index.html">Beranda</a>
+          <a class="nav-link" href="tentang.html">Tentang kami</a>
+          <a class="nav-link" href="game.html">Mini game</a>
+          <button class="nav-idea open-ideas" type="button">Tulis harapan</button>
+        </div>
+      </nav>
+    </header>
+
+    <main id="beranda">
+      <section class="container hero">
+        <div>
+          <div class="eyebrow">Welcome to my website</div>
+          <h1>Titik kumpul orang gabut</h1>
+          <div class="button-row">
+            <button class="button" id="open-ideas" type="button">Mari mulai <span>→</span></button>
+            <a class="button button-secondary" href="game.html">Mini game <span>🎮</span></a>
+          </div>
+        </div>
+        <div class="art" aria-label="Ilustrasi ide">
+          <div class="note"><span class="dot">01</span><strong>Tulis harapan mu</strong><p>Tak perlu sempurna—cukup beri ia tempat untuk tumbuh.</p></div>
+          <div class="note"><span class="dot">02</span><strong>Wujudkan perlahan</strong><p>Satu langkah kecil setiap hari membawa perubahan besar.</p></div>
+        </div>
+      </section>
+
+      <section class="features" id="tentang">
+        <div class="container">
+          <div class="section-title">
+            <div class="eyebrow">Mengapa Ruang Gabut?</div>
+            <h2>Sederhana, fokus, dan terasa personal.</h2>
+            <p>Semua yang Anda perlukan untuk memulai tanpa terganggu oleh hal-hal yang tidak penting.</p>
+          </div>
+          <div class="grid">
+            <article class="feature"><div class="icon">✦</div><b>Jernih</b><p>Ruang yang tenang membuat tujuan Anda lebih mudah dilihat.</p></article>
+            <article class="feature"><div class="icon">◌</div><b>Fleksibel</b><p>Gunakan dengan cara yang paling sesuai untuk perjalanan Anda.</p></article>
+            <article class="feature"><div class="icon">↗</div><b>Bertumbuh</b><p>Bangun kebiasaan kecil yang konsisten dan bermakna.</p></article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="container"><span>© 2026 Ruang Gabut</span><span>Website milik Abimanyu</span></footer>
+
+    <dialog id="ideas-dialog" aria-labelledby="ideas-title">
+      <div class="idea-panel">
+        <div class="dialog-top">
+          <div><div class="eyebrow">Ruang pribadimu</div><h2 id="ideas-title">Tulis harapan mu</h2></div>
+          <button class="close" id="close-ideas" type="button" aria-label="Tutup">×</button>
+        </div>
+        <p>Catat apa pun yang sedang ada di pikiranmu. Harapan akan tersimpan di perangkat ini.</p>
+        <form id="idea-form">
+          <label for="idea-text">Harapan mu</label>
+          <textarea id="idea-text" maxlength="500" placeholder="Contoh: Membuat kelas kecil untuk berbagi keterampilan..." required></textarea>
+          <div class="form-row"><span class="saved-note">Maksimal 500 karakter</span><button class="button" type="submit">Simpan harapan</button></div>
+        </form>
+        <section class="saved-list" aria-live="polite">
+          <h3>Harapan mu</h3>
+          <div id="ideas-list"></div>
+        </section>
+      </div>
+    </dialog>
+
+    <script>
+      const storageKey = "ruang-ide-items";
+      const dialog = document.querySelector("#ideas-dialog");
+      const form = document.querySelector("#idea-form");
+      const input = document.querySelector("#idea-text");
+      const list = document.querySelector("#ideas-list");
+      const menuToggle = document.querySelector("#menu-toggle");
+      const navMenu = document.querySelector("#nav-menu");
+
+      function closeMenu() {
+        navMenu.classList.remove("is-open");
+        menuToggle.setAttribute("aria-expanded", "false");
+      }
+
+      function getIdeas() {
+        try { return JSON.parse(localStorage.getItem(storageKey)) || []; }
+        catch { return []; }
+      }
+
+      function saveIdeas(ideas) {
+        localStorage.setItem(storageKey, JSON.stringify(ideas));
+      }
+
+      function renderIdeas() {
+        const ideas = getIdeas();
+        list.innerHTML = "";
+        if (!ideas.length) {
+          list.innerHTML = '<p class="empty">Belum ada harapan tersimpan.</p>';
+          return;
+        }
+        ideas.forEach((idea) => {
+          const item = document.createElement("article");
+          item.className = "idea-item";
+          const text = document.createElement("p");
+          text.textContent = idea.text;
+          const remove = document.createElement("button");
+          remove.className = "delete-idea";
+          remove.type = "button";
+          remove.setAttribute("aria-label", "Hapus harapan");
+          remove.textContent = "×";
+          remove.addEventListener("click", () => {
+            saveIdeas(getIdeas().filter((savedIdea) => savedIdea.id !== idea.id));
+            renderIdeas();
+          });
+          item.append(text, remove);
+          list.append(item);
+        });
+      }
+
+      document.querySelectorAll(".open-ideas, #open-ideas").forEach((button) => button.addEventListener("click", () => {
+        closeMenu();
+        renderIdeas();
+        dialog.showModal();
+        input.focus();
+      }));
+      menuToggle.addEventListener("click", () => {
+        const willOpen = !navMenu.classList.contains("is-open");
+        navMenu.classList.toggle("is-open", willOpen);
+        menuToggle.setAttribute("aria-expanded", String(willOpen));
+      });
+      navMenu.querySelectorAll("a").forEach((link) => link.addEventListener("click", closeMenu));
+      document.addEventListener("click", (event) => {
+        if (!event.target.closest("nav")) closeMenu();
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") closeMenu();
+      });
+      document.querySelector("#close-ideas").addEventListener("click", () => dialog.close());
+      dialog.addEventListener("click", (event) => {
+        if (event.target === dialog) dialog.close();
+      });
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const text = input.value.trim();
+        if (!text) return;
+        const ideas = getIdeas();
+        ideas.unshift({ id: Date.now(), text });
+        saveIdeas(ideas);
+        input.value = "";
+        renderIdeas();
+      });
+      renderIdeas();
+    </script>
+  </body>
+</html>
